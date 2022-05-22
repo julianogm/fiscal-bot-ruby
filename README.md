@@ -1,24 +1,14 @@
-# README
+# Fiscal Bot
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+<img src='https://img.shields.io/badge/Ruby-3.1.2-CC342D?logo=ruby&logoColor=red&color=green'>
+<img src='https://img.shields.io/badge/Rails-7.0.2-CC342D?logo=rubyonrails&logoColor=white&color=green&style=flatsquare'>
 
-Things you may want to cover:
+Bem vindo ao Bot Fiscal.
+Esse é um bot do telegram de consultas a [api da câmara do deputados](https://dadosabertos.camara.leg.br/swagger/api.html) do Brasil.
 
-* Ruby version
+Você pode testar o bot pesquisando @fiscal_politico_bot no telegram, ou clicando [aqui](http://t.me/fiscal_politico_bot).
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Para levantar a aplicação, rode o comando no terminal:
+```
+bin/rake telegram:bot:poller
+```
