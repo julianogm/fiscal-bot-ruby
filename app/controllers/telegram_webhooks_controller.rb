@@ -35,11 +35,14 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     }
   end
 
-  def callback_query(data)
-    if data == 'alert'
-      answer_callback_query t('.alert'), show_alert: true
+  def callback_query(filtro)
+    #binding.break
+    if UF.keys.include?(filtro)
+      respond_with :message, text: t('.estado', text: filtro)
+      respond_with :message, text: nomes_deputados(deputados_por_estado(filtro))
     else
-      answer_callback_query t('.no_alert')
+      respond_with :message, text: t('.partido', text: filtro)
+      respond_with :message, text: nomes_deputados(deputados_por_partido(filtro))
     end
   end
 

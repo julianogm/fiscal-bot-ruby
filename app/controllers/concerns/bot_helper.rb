@@ -1,16 +1,20 @@
 module BotHelper
   def estados_buttons
     buttons = []
-    UF.each do |k, v|
-      buttons << [{text: v, callback_data: 'no_alert'}]
+    i = 0
+    while i < 27 do
+      buttons << [{text: UF.values[i], callback_data: UF.keys[i]},
+                  {text: UF.values[i+1], callback_data: UF.keys[i+1]}]
+      i = i + 2
     end
+    buttons[13].pop
     buttons
   end
 
   def partidos_buttons
     buttons = []
     siglas_partidos.each do |sigla|
-      buttons << [{text: sigla, callback_data: 'no_alert'}]
+      buttons << [{text: sigla, callback_data: sigla}]
     end
     buttons
   end
@@ -43,6 +47,18 @@ module BotHelper
   end
 
   def siglas_partidos
-    lista_partidos.map {|e| e['sigla']}
+    lista_partidos.map { |e| e['sigla'] }
+  end
+
+  def deputados_por_estado(estado)
+    lista_deputados.select{ |dep| dep['siglaUf']==estado }
+  end
+
+  def deputados_por_partido(partido)
+    lista_deputados.select{ |dep| dep['siglaPartido']==partido }
+  end
+
+  def nomes_deputados(hash)
+    hash.map{ |dep| dep['nome'] }.join("\n")
   end
 end
