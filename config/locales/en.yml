@@ -3,6 +3,8 @@ en:
     action_missing:
       command: 'comando inválido'
     callback_query:
+      estado: 'Listando os deputados da unidade federativa: %{text}'
+      partido: 'Listando os deputados do partido: %{text}'
       alert: This is ALERT-T-T!!!
       no_alert: Simple answer
     help:
