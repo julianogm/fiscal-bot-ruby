@@ -61,4 +61,13 @@ module BotHelper
   def nomes_deputados(hash)
     hash.map{ |dep| dep['nome'] }.join("\n")
   end
+
+  def foto_deputado(nome_deputado)
+    lista_deputados.select{|e| e['nome']==nome_deputado}[0]['urlFoto']
+    #"https://www.camara.leg.br/internet/deputado/bandep/"+id_deputado+".jpg"
+  end
+
+  def dados_politico(nome_deputado)
+    deputado = lista_deputados.select{|e| e['nome']==nome_deputado}[0]
+  end
 end
