@@ -79,7 +79,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   end
 
   def message(message)
-    respond_with :message, text: t('.content', text: message['text'])
+    #respond_with :message, text: t('.content', text: message['text'])
     respond_with :photo, photo: foto_deputado(message['text'])
     respond_with :message, text: dados_politico(message['text'])
   end

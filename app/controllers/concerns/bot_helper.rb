@@ -70,13 +70,32 @@ module BotHelper
   def dados_politico(nome_deputado)
     deputado = lista_deputados.select{ |e| e['nome']==nome_deputado }[0]
     mensagem = ""
-    mensagem.concat("link: https://www.camara.leg.br/deputados/#{deputado["id"]}")
-    mensagem.concat("\n")
-    mensagem.concat("email: #{deputado["email"]}")
-    mensagem.concat("\n")
-    mensagem.concat("Partido: #{deputado["siglaPartido"]}")
-    mensagem.concat("\n")
-    mensagem.concat("Estado: #{deputado["siglaUf"]}")
+    mensagem.concat(t('.content', text: deputado['nome']))
+    mensagem.concat("email: #{deputado["email"]}\n")
+    mensagem.concat("Partido: #{deputado["siglaPartido"]}\n")
+    mensagem.concat("Estado: #{deputado["siglaUf"]}\n\n")
+    mensagem.concat("CEAP utilizada em #{Time.now.year}: R$ #{despesas_deputado(deputado["id"])}")
+
+    mensagem.concat("\n\n\nMais informações: https://www.camara.leg.br/deputados/#{deputado["id"]}\n")
+    #despesas_deputado(deputado["id"])
     mensagem
+  end
+
+  def despesas_deputado(id)
+    lista = []
+    i = 0
+    while true
+      #gastos = API_CAMARA + "deputados/#{id}/despesas?ano=#{Time.now.year}&pagina=1"
+      conn = Faraday.new(API_CAMARA + "deputados/#{id}/despesas?ano=#{Time.now.year}&pagina=#{i+=1}") do |f|
+        f.request :json
+        f.response :json
+        f.adapter :net_http
+      end
+      response = conn.get.body['dados']
+      break if response.empty?
+      lista << response
+    end
+    lista.flatten!(1)
+    lista.map{ |i| i['valorLiquido'] }.sum
   end
 end
