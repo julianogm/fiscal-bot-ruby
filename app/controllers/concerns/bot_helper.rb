@@ -68,6 +68,15 @@ module BotHelper
   end
 
   def dados_politico(nome_deputado)
-    deputado = lista_deputados.select{|e| e['nome']==nome_deputado}[0]
+    deputado = lista_deputados.select{ |e| e['nome']==nome_deputado }[0]
+    mensagem = ""
+    mensagem.concat("link: https://www.camara.leg.br/deputados/#{deputado["id"]}")
+    mensagem.concat("\n")
+    mensagem.concat("email: #{deputado["email"]}")
+    mensagem.concat("\n")
+    mensagem.concat("Partido: #{deputado["siglaPartido"]}")
+    mensagem.concat("\n")
+    mensagem.concat("Estado: #{deputado["siglaUf"]}")
+    mensagem
   end
 end

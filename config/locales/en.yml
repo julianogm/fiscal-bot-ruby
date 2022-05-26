@@ -45,7 +45,7 @@ en:
       notice: Remembered!
       prompt: What should I remember?
     message:
-      content: 'You wrote: %{text}'
+      content: 'Gastos do deputado(a) %{text}'
     remind_me:
       nothing: Nothing to remind
     start:

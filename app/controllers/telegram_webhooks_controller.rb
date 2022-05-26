@@ -81,6 +81,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   def message(message)
     respond_with :message, text: t('.content', text: message['text'])
     respond_with :photo, photo: foto_deputado(message['text'])
+    respond_with :message, text: dados_politico(message['text'])
   end
 
   def action_missing(action, *_args)
