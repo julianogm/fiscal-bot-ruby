@@ -7,26 +7,27 @@ module BotHelper
                   {text: UF.values[i+1], callback_data: UF.keys[i+1]}]
       i = i + 2
     end
-    buttons[13].pop
+    buttons.last.pop
     buttons
   end
 
   def partidos_buttons
+    siglas = lista_deputados.map{ |e| e['siglaPartido'] }.uniq
+    tam = siglas.size
     buttons = []
-    siglas_partidos.each do |sigla|
-      buttons << [{text: sigla, callback_data: sigla}]
+    i = 0
+    while i < tam do
+      buttons << [{text: siglas[i], callback_data: siglas[i]},
+                 {text: siglas[i+1], callback_data: siglas[i+1]}]
+      i = i + 2
     end
+    return buttons unless tam.odd?
+    buttons.last.pop
     buttons
   end
 
   def lista_deputados
-    conn = Faraday.new(API_CAMARA + "deputados?ordem=ASC&ordenarPor=nome") do |f|
-      f.request :json
-      f.response :json
-      f.adapter :net_http
-    end
-
-    conn.get.body['dados']
+    get_request(API_CAMARA + "deputados")
   end
 
   #API NAO RETORNA TODOS OS PARTIDOS, NECESSARIO FAZER VARIAS REQUISICOES
@@ -34,20 +35,11 @@ module BotHelper
     lista = []
     i = 0
     while true
-      conn = Faraday.new(API_CAMARA + "partidos?pagina=#{i+=1}") do |f|
-        f.request :json
-        f.response :json
-        f.adapter :net_http
-      end
-      response = conn.get.body['dados']
+      response = get_request(API_CAMARA + "partidos?pagina=#{i+=1}")
       break if response.empty?
       lista << response
     end
     lista.flatten(1)    #nivela o array
-  end
-
-  def siglas_partidos
-    lista_partidos.map { |e| e['sigla'] }
   end
 
   def deputados_por_estado(estado)
@@ -64,20 +56,18 @@ module BotHelper
 
   def foto_deputado(nome_deputado)
     lista_deputados.select{|e| e['nome']==nome_deputado}[0]['urlFoto']
-    #"https://www.camara.leg.br/internet/deputado/bandep/"+id_deputado+".jpg"
   end
 
-  def dados_politico(nome_deputado)
+  def dados_deputado(nome_deputado)
     deputado = lista_deputados.select{ |e| e['nome']==nome_deputado }[0]
     mensagem = ""
-    mensagem.concat(t('.content', text: deputado['nome']))
+    mensagem.concat(t('.content', text: deputado['nome'])+"\n")
     mensagem.concat("email: #{deputado["email"]}\n")
     mensagem.concat("Partido: #{deputado["siglaPartido"]}\n")
     mensagem.concat("Estado: #{deputado["siglaUf"]}\n\n")
     mensagem.concat("CEAP utilizada em #{Time.now.year}: R$ #{despesas_deputado(deputado["id"])}")
 
     mensagem.concat("\n\n\nMais informações: https://www.camara.leg.br/deputados/#{deputado["id"]}\n")
-    #despesas_deputado(deputado["id"])
     mensagem
   end
 
@@ -85,17 +75,20 @@ module BotHelper
     lista = []
     i = 0
     while true
-      #gastos = API_CAMARA + "deputados/#{id}/despesas?ano=#{Time.now.year}&pagina=1"
-      conn = Faraday.new(API_CAMARA + "deputados/#{id}/despesas?ano=#{Time.now.year}&pagina=#{i+=1}") do |f|
-        f.request :json
-        f.response :json
-        f.adapter :net_http
-      end
-      response = conn.get.body['dados']
+      response = get_request(API_CAMARA + "deputados/#{id}/despesas?ano=#{Time.now.year}&pagina=#{i+=1}")
       break if response.empty?
       lista << response
     end
     lista.flatten!(1)
     lista.map{ |i| i['valorLiquido'] }.sum
+  end
+
+  def get_request(url)
+    conn = Faraday.new(url) do |f|
+      f.request :json
+      f.response :json
+      f.adapter :net_http
+    end
+    conn.get.body['dados']
   end
 end

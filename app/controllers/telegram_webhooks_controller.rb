@@ -36,9 +36,8 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   end
 
   def callback_query(filtro)
-    #binding.break
     if UF.keys.include?(filtro)
-      respond_with :message, text: t('.estado', text: filtro)
+      respond_with :message, text: t('.estado', text: UF[filtro])
       respond_with :message, text: nomes_deputados(deputados_por_estado(filtro))
     else
       respond_with :message, text: t('.partido', text: filtro)
@@ -79,9 +78,8 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   end
 
   def message(message)
-    #respond_with :message, text: t('.content', text: message['text'])
     respond_with :photo, photo: foto_deputado(message['text'])
-    respond_with :message, text: dados_politico(message['text'])
+    respond_with :message, text: dados_deputado(message['text'])
   end
 
   def action_missing(action, *_args)
