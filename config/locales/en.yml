@@ -9,15 +9,12 @@ en:
       no_alert: Simple answer
     help:
       content: |
-        Available cmds:
-        /start - Greeting.
-        /memo %text% - Saves text to session.
-        /remind_me - Replies with text from session.
-        /keyboard - Simple keyboard.
-        /inline_keyboard - Inline keyboard example.
-        Bot supports inline queries. Enable it in @BotFather.
-        /last_chosen_inline_result - Your last chosen inline result \
-        (Enable feedback with /setinlinefeedback).
+        Comandos disponíveis:
+        /iniciar - Bem vindo ao bot Fiscal de Politicos.
+        /deputados - Pesquisar deputados por filtros.
+        /deputado 'nome do deputado' - Pesquisar dados de um deputado.
+        /estados - Filtrar deputados por Estado-UF.
+        /partidos - Filtrar deputados por partidos.
     estados:
       alert: Answer with alert
       no_alert: Without alert
