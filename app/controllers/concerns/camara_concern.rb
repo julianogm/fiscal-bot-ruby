@@ -12,7 +12,7 @@ module CamaraConcern
     lista_deputados.select{ |dep| dep['siglaPartido']==partido }
   end
 
-  def nomes_deputados(hash)
+  def nomes_deputados(hash = lista_deputados)
     hash.map{ |dep| dep['nome'] }.join("\n")
   end
 

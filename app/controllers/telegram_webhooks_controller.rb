@@ -47,16 +47,19 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
 
   def deputado!(n1, n2 = nil, n3 = nil, n4 = nil, n5 = nil)
     nome_deputado = [n1,n2,n3,n4,n5].join(' ').strip
-    #if(nomes_deputados.include?(message['text'])) do
+    if(nomes_deputados.include?(nome_deputado))
       respond_with :photo, photo: foto_deputado(nome_deputado)
       respond_with :message, text: dados_deputado(nome_deputado)
+    else
+      respond_with :message, text: t('.deputado.invalido')
+    end
   end
 
   def callback_query(filtro)
-    if UF.keys.include?(filtro)
+    if(UF.keys.include?(filtro))
       respond_with :message, text: t('.estado', text: UF[filtro])
       respond_with :message, text: nomes_deputados(deputados_por_estado(filtro))
-    elsif ["estados","partidos"].include?(filtro)
+    elsif(["estados","partidos"].include?(filtro))
       partidos! if filtro == "partidos"
       estados! if filtro == "estados"
     else
@@ -65,10 +68,13 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     end
   end
 
-  def message(message)
-    #if(nomes_deputados.include?(message)) do
-    respond_with :photo, photo: foto_deputado(message['text'])
-    respond_with :message, text: dados_deputado(message['text'])
+  def message(mensagem)
+    if(nomes_deputados.include?(mensagem['text']))
+      respond_with :photo, photo: foto_deputado(mensagem['text'])
+      respond_with :message, text: dados_deputado(mensagem['text'])
+    else
+      respond_with :message, text: t('.message.invalid')
+    end
   end
 
   def action_missing(action, *_args)

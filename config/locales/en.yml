@@ -7,14 +7,14 @@ en:
       partido: 'Listando os deputados do partido: %{text}'
       alert: This is ALERT-T-T!!!
       no_alert: Simple answer
-    help:
+    ajuda:
       content: |
         Comandos disponíveis:
-        /iniciar - Bem vindo ao bot Fiscal de Politicos.
+        /ajuda - Listar comandos do bot
         /deputados - Pesquisar deputados por filtros.
-        /deputado 'nome do deputado' - Pesquisar dados de um deputado.
-        /estados - Filtrar deputados por Estado-UF.
-        /partidos - Filtrar deputados por partidos.
+        /deputado 'nome do deputado' - Pesquisar dados de um deputado pelo nome.
+        /estados - Listar deputados por Estado-UF.
+        /partidos - Listar deputados por partidos.
     estados:
       alert: Answer with alert
       no_alert: Without alert
@@ -41,8 +41,13 @@ en:
     memo:
       notice: Remembered!
       prompt: What should I remember?
-    message:
+    deputado:
       content: 'Gastos do deputado(a) %{text}'
+      invalido:
+        Nome não encontrado na legislatura atual. Confira o nome do Deputado,
+        ou pesquise por partidos ou estados os deputados com mandato em vigor.
+    message:
+      invalid: Comando Inválido. Digite /ajuda para ver os comandos disponíveis.
     remind_me:
       nothing: Nothing to remind
     start:
