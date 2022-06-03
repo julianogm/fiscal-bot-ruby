@@ -10,25 +10,13 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     respond_with :message, text: t('.content')
   end
 
-  def keyboard!(value = nil, *)
-    if value
-      respond_with :message, text: t('.selected', value: value)
-    else
-      save_context :keyboard!
-      respond_with :message, text: t('.prompt'), reply_markup: {
-        keyboard: [t('.buttons')],
-        resize_keyboard: true,
-        one_time_keyboard: true,
-        selective: true,
-      }
-    end
-  end
-
   def deputados!(*)
     respond_with :message, text: "Escolha um Filtro", reply_markup: {
       inline_keyboard: [
-          [{text: "Por Estado", callback_data: "estados"},
-           {text: "Por Partido", callback_data: "partidos"}]
+          [
+            {text: "Por Estado", callback_data: "estados"},
+            {text: "Por Partido", callback_data: "partidos"},
+           ]
       ]
     }
   end
@@ -47,19 +35,20 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
 
   def deputado!(n1, n2 = nil, n3 = nil, n4 = nil, n5 = nil)
     nome_deputado = [n1,n2,n3,n4,n5].join(' ').strip
-    if(nomes_deputados.include?(nome_deputado))
+    nomes = lista_deputados.map{|d| d['nome']}
+    if nomes.include?(nome_deputado)
       respond_with :photo, photo: foto_deputado(nome_deputado)
-      respond_with :message, text: dados_deputado(nome_deputado)
+      respond_with :message, text: dados_deputado(nome_deputado), parse_mode: "MarkdownV2"
     else
-      respond_with :message, text: t('.deputado.invalido')
+      respond_with :message, text: t('.deputado.invalid')
     end
   end
 
   def callback_query(filtro)
-    if(UF.keys.include?(filtro))
+    if UF.keys.include?(filtro)
       respond_with :message, text: t('.estado', text: UF[filtro])
       respond_with :message, text: nomes_deputados(deputados_por_estado(filtro))
-    elsif(["estados","partidos"].include?(filtro))
+    elsif ["estados","partidos"].include?(filtro)
       partidos! if filtro == "partidos"
       estados! if filtro == "estados"
     else
@@ -69,9 +58,9 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   end
 
   def message(mensagem)
-    if(nomes_deputados.include?(mensagem['text']))
+    if nomes_deputados.include?(mensagem['text'])
       respond_with :photo, photo: foto_deputado(mensagem['text'])
-      respond_with :message, text: dados_deputado(mensagem['text'])
+      respond_with :message, text: dados_deputado(mensagem['text']), parse_mode: "MarkdownV2"
     else
       respond_with :message, text: t('.message.invalid')
     end

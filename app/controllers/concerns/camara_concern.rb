@@ -22,14 +22,21 @@ module CamaraConcern
 
   def dados_deputado(nome_deputado)
     deputado = lista_deputados.select{ |e| e['nome']==nome_deputado }.first
+    info_deputado = get_request(API_CAMARA + "deputados/#{deputado["id"]}")
     mensagem = ""
     mensagem.concat(t('.content', text: deputado['nome'])+"\n")
-    mensagem.concat("email: #{deputado["email"]}\n")
+    mensagem.concat("Nome civil: #{info_deputado['nomeCivil']}\n")
+    mensagem.concat("CPF: #{info_deputado['cpf']}\n")
     mensagem.concat("Partido: #{deputado["siglaPartido"]}\n")
-    mensagem.concat("Estado: #{deputado["siglaUf"]}\n\n")
-    mensagem.concat("CEAP utilizada em #{Time.now.year}: R$ #{despesas_deputado(deputado["id"])}")
+    mensagem.concat("Estado: #{deputado["siglaUf"]}\n")
+    mensagem.concat("email: #{deputado["email"]}\n")
+    mensagem.concat("telefone: (61) #{info_deputado['ultimoStatus']['gabinete']['telefone']}\n\n")
+    mensagem.concat("Cota para o Exercício da Atividade Parlamentar (CEAP) utilizada em #{Time.now.year}: R$ #{despesas_deputado(deputado["id"])}")
 
-    mensagem.concat("\n\n\nMais informações: https://www.camara.leg.br/deputados/#{deputado["id"]}\n")
+    mensagem.concat("\n\nMais informações: https://www.camara.leg.br/deputados/#{deputado["id"]}\n")
+
+    mensagem.concat("\nSobre a CEAP: https://www2.camara.leg.br/transparencia/acesso-a-informacao/copy_of_perguntas-frequentes/cota-para-o-exercicio-da-atividade-parlamentar")
+
     mensagem
   end
 
