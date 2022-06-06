@@ -26,7 +26,6 @@ module CamaraConcern
     deputado = lista_deputados.select{ |e| e['nome']==nome_deputado }.first
     info_deputado = get_request(API_CAMARA + "deputados/#{deputado["id"]}")
     mensagem = ""
-    mensagem.concat(t('.content', text: deputado['nome'])+"\n")
     mensagem.concat("Nome civil: #{info_deputado['nomeCivil']}\n")
     mensagem.concat("CPF: #{info_deputado['cpf']}\n")
     mensagem.concat("Partido: #{deputado["siglaPartido"]}\n")
@@ -34,7 +33,7 @@ module CamaraConcern
     mensagem.concat("email: #{deputado["email"]}\n")
     mensagem.concat("telefone: (61) #{info_deputado['ultimoStatus']['gabinete']['telefone']}\n\n")
 
-    mensagem.concat("Gastos em #{Time.now.year}:\n")
+    mensagem.concat(t('.content', text: deputado['nome']) +" em #{Time.now.year}\n")
     mensagem.concat("Cota para o Exercício da Atividade Parlamentar (CEAP): R$ #{despesas_deputado(deputado["id"])}\n")
     mensagem.concat("Verba de Gabinete utilizada: R$ #{verba_gabinete(deputado["id"])}")
     mensagem.concat("\n\nMais informações: https://www.camara.leg.br/deputados/#{deputado["id"]}\n")
@@ -80,7 +79,8 @@ module CamaraConcern
     response = get_request(url)
     html = Nokogiri::HTML(response)
     list = html.css('table').text.delete(' ').lines.select{ |el| el!="\n" }
-    index = 16 + Time.now.mon * 3   # o numero de elementos no vetor aumenta conforme os meses se passam
-    list[index].chop                # .chop remove o \n no final da string
+    list.delete_at(3)                             # remove a primeira elemento que contem o texto "TotalGasto\n"
+    index = list.find_index("TotalGasto\n") + 1   # procura o próximo elemento "TotalGasto\n", retorna seu indice e adiciona 1
+    list[index].chop                              # pesquisa o valor gasto com verba de gabinete e remove o \n no final da string
   end
 end
