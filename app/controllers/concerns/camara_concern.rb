@@ -33,8 +33,10 @@ module CamaraConcern
     mensagem.concat("Estado: #{deputado["siglaUf"]}\n")
     mensagem.concat("email: #{deputado["email"]}\n")
     mensagem.concat("telefone: (61) #{info_deputado['ultimoStatus']['gabinete']['telefone']}\n\n")
-    mensagem.concat("Cota para o Exercício da Atividade Parlamentar (CEAP) utilizada em #{Time.now.year}: R$ #{despesas_deputado(deputado["id"])}")
 
+    mensagem.concat("Gastos em #{Time.now.year}:\n")
+    mensagem.concat("Cota para o Exercício da Atividade Parlamentar (CEAP): R$ #{despesas_deputado(deputado["id"])}\n")
+    mensagem.concat("Verba de Gabinete utilizada: R$ #{verba_gabinete(deputado["id"])}")
     mensagem.concat("\n\nMais informações: https://www.camara.leg.br/deputados/#{deputado["id"]}\n")
 
     mensagem.concat("\nSobre a CEAP: https://www2.camara.leg.br/transparencia/acesso-a-informacao/copy_of_perguntas-frequentes/cota-para-o-exercicio-da-atividade-parlamentar")
@@ -78,6 +80,7 @@ module CamaraConcern
     response = get_request(url)
     html = Nokogiri::HTML(response)
     list = html.css('table').text.delete(' ').lines.select{ |el| el!="\n" }
-    list[34].chop
+    index = 16 + Time.now.mon * 3   # o numero de elementos no vetor aumenta conforme os meses se passam
+    list[index].chop                # .chop remove o \n no final da string
   end
 end
