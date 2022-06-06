@@ -38,7 +38,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     nomes = lista_deputados.map{|d| d['nome']}
     if nomes.include?(nome_deputado)
       respond_with :photo, photo: foto_deputado(nome_deputado)
-      respond_with :message, text: dados_deputado(nome_deputado), parse_mode: "MarkdownV2"
+      respond_with :message, text: dados_deputado(nome_deputado)
     else
       respond_with :message, text: t('.deputado.invalid')
     end
@@ -60,7 +60,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   def message(mensagem)
     if nomes_deputados.include?(mensagem['text'])
       respond_with :photo, photo: foto_deputado(mensagem['text'])
-      respond_with :message, text: dados_deputado(mensagem['text']), parse_mode: "MarkdownV2"
+      respond_with :message, text: dados_deputado(mensagem['text'])
     else
       respond_with :message, text: t('.message.invalid')
     end
