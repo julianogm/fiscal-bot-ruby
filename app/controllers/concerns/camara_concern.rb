@@ -1,3 +1,5 @@
+require 'json'
+
 module CamaraConcern
 
   def lista_deputados
@@ -65,11 +67,17 @@ module CamaraConcern
   end
 
   def get_request(url)
-    conn = Faraday.new(url) do |f|
-      f.request :json
-      f.response :json
-      f.adapter :net_http
-    end
-    conn.get.body['dados']
+    response = Faraday.get(url)
+    return response.body unless response.headers['Content-Type'].include?('application/json')
+    page = JSON.parse(response.body)
+    page['dados']
+  end
+
+  def verba_gabinete(id)
+    url = "https://www.camara.leg.br/deputados/#{id}"
+    response = get_request(url)
+    html = Nokogiri::HTML(response)
+    list = html.css('table').text.delete(' ').lines.select{ |el| el!="\n" }
+    list[34].chop
   end
 end
