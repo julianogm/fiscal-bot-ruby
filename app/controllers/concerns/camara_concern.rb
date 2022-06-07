@@ -3,7 +3,9 @@ require 'json'
 module CamaraConcern
 
   def lista_deputados
-    get_request(API_CAMARA + "deputados")
+    lista = get_request(API_CAMARA + "deputados")
+    lista.map{|e| e["nome"].downcase! }
+    lista
   end
 
   def deputados_por_estado(estado)
@@ -18,13 +20,14 @@ module CamaraConcern
     hash.map{ |dep| dep['nome'] }.join("\n")
   end
 
-  def foto_deputado(nome_deputado)
-    lista_deputados.select{|e| e['nome']==nome_deputado}.first['urlFoto']
+  def foto_deputado(id_deputado)
+    lista_deputados.select{|e| e['id']==id_deputado}.first['urlFoto']
   end
 
-  def dados_deputado(nome_deputado)
-    deputado = lista_deputados.select{ |e| e['nome']==nome_deputado }.first
+  def dados_deputado(deputado)
+    #deputado = lista_deputados.select{ |e| e['nome']==nome_deputado }.first
     info_deputado = get_request(API_CAMARA + "deputados/#{deputado["id"]}")
+    gastos_deputado = gastos(deputado["id"])
     mensagem = ""
     mensagem.concat("Nome civil: #{info_deputado['nomeCivil']}\n")
     mensagem.concat("CPF: #{info_deputado['cpf']}\n")
@@ -34,8 +37,8 @@ module CamaraConcern
     mensagem.concat("telefone: (61) #{info_deputado['ultimoStatus']['gabinete']['telefone']}\n\n")
 
     mensagem.concat(t('.content', text: deputado['nome']) +" em #{Time.now.year}\n")
-    mensagem.concat("Cota para o Exercício da Atividade Parlamentar (CEAP): R$ #{despesas_deputado(deputado["id"])}\n")
-    mensagem.concat("Verba de Gabinete utilizada: R$ #{verba_gabinete(deputado["id"])}")
+    mensagem.concat("Cota para o Exercício da Atividade Parlamentar (CEAP): R$ #{gastos_deputado.first}\n")
+    mensagem.concat("Verba de Gabinete utilizada: R$ #{gastos_deputado.second}")
     mensagem.concat("\n\nMais informações: https://www.camara.leg.br/deputados/#{deputado["id"]}\n")
 
     mensagem.concat("\nSobre a CEAP: https://www2.camara.leg.br/transparencia/acesso-a-informacao/copy_of_perguntas-frequentes/cota-para-o-exercicio-da-atividade-parlamentar")
@@ -74,13 +77,16 @@ module CamaraConcern
     page['dados']
   end
 
-  def verba_gabinete(id)
+  def gastos(id)
     url = "https://www.camara.leg.br/deputados/#{id}"
     response = get_request(url)
     html = Nokogiri::HTML(response)
     list = html.css('table').text.delete(' ').lines.select{ |el| el!="\n" }
     list.delete_at(3)                             # remove a primeira elemento que contem o texto "TotalGasto\n"
+    resposta = []
+    resposta << list[3].chop
     index = list.find_index("TotalGasto\n") + 1   # procura o próximo elemento "TotalGasto\n", retorna seu indice e adiciona 1
-    list[index].chop                              # pesquisa o valor gasto com verba de gabinete e remove o \n no final da string
+    resposta << list[index].chop                  # pesquisa o valor gasto com verba de gabinete e remove o \n no final da string
+    resposta
   end
 end
