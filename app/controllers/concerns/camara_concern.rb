@@ -16,6 +16,14 @@ module CamaraConcern
     lista_deputados.select{ |dep| dep['siglaPartido']==partido }
   end
 
+  def deputados_por_nome(nome)
+    id_legis = get_request(LEGISLATURA).first['id']
+    nome_parseado = URI.parse(CGI.escape(nome))
+    url = API_CAMARA + "deputados?nome=#{nome_parseado}&idLegislatura=#{id_legis}&ordem=ASC&ordenarPor=nome"
+    lista = get_request(url)
+    lista
+  end
+
   def nomes_deputados(hash = lista_deputados)
     hash.map{ |dep| dep['nome'] }.join("\n")
   end

@@ -11,3 +11,5 @@ UF = {'AC' => 'Acre', 'AL' => 'Alagoas', 'AP' => 'Amapá',
 
 
 API_CAMARA = "https://dadosabertos.camara.leg.br/api/v2/".freeze
+
+LEGISLATURA = API_CAMARA + "legislaturas?itens=1&ordem=DESC&ordenarPor=id"

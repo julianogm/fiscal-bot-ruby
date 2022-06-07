@@ -36,13 +36,22 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   def deputado!(n1, n2 = nil, n3 = nil, n4 = nil, n5 = nil)
     nome_deputado = [n1,n2,n3,n4,n5].join(' ').strip
     nome_deputado.downcase!
-    index = lista_deputados.index{|d| d['nome']==nome_deputado}
-    deputado = lista_deputados[index]
-    unless deputado.nil?
+    if nome_deputado.size < 3
+      respond_with :message, text: "Nome muito curto. Insira um nome ou trecho de nome maior"
+      return
+    end
+    lista = deputados_por_nome(nome_deputado)
+    deputado = nil
+    deputado = lista.first if lista.size==1
+    #index = lista_deputados.index{|d| d['nome']==nome_deputado}
+    #deputado = lista_deputados[index]
+    if lista.empty?
+      respond_with :message, text: t('.deputado.invalid')
+    elsif deputado.nil?
+      respond_with :message, text: nomes_deputados(lista)
+    else
       respond_with :photo, photo: deputado['urlFoto']
       respond_with :message, text: dados_deputado(deputado)
-    else
-      respond_with :message, text: t('.deputado.invalid')
     end
   end
 
