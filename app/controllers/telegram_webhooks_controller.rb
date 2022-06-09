@@ -33,18 +33,24 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     }
   end
 
-  def deputado!(n1, n2 = nil, n3 = nil, n4 = nil, n5 = nil)
-    nome_deputado = [n1,n2,n3,n4,n5].join(' ').strip
+  def deputado!(n1 = nil, n2 = nil, n3 = nil, n4 = nil, n5 = nil, n6 = nil)
+    nome_deputado = [n1,n2,n3,n4,n5,n6].join(' ').strip
     nome_deputado.downcase!
-    if nome_deputado.size < 3
-      respond_with :message, text: "Nome muito curto. Insira um nome ou trecho de nome maior"
+
+    if nome_deputado.empty?
+      respond_with :message, text: "Nome em falta. Insira um nome ou uma parte do nome com 3 letras ou mais."
       return
     end
+
+    if nome_deputado.size < 3
+      respond_with :message, text: "Nome muito curto. Insira um nome completo ou uma parte do nome com 3 letras ou mais."
+      return
+    end
+
     lista = deputados_por_nome(nome_deputado)
     deputado = nil
     deputado = lista.first if lista.size==1
-    #index = lista_deputados.index{|d| d['nome']==nome_deputado}
-    #deputado = lista_deputados[index]
+
     if lista.empty?
       respond_with :message, text: t('.deputado.invalid')
     elsif deputado.nil?
@@ -65,15 +71,6 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     else
       respond_with :message, text: t('.partido', text: filtro)
       respond_with :message, text: nomes_deputados(deputados_por_partido(filtro))
-    end
-  end
-
-  def message(mensagem)
-    if nomes_deputados.include?(mensagem['text'])
-      respond_with :photo, photo: foto_deputado(mensagem['text'])
-      respond_with :message, text: dados_deputado(mensagem['text'])
-    else
-      respond_with :message, text: t('.message.invalid')
     end
   end
 

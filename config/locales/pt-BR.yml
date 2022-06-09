@@ -22,7 +22,7 @@ pt-BR:
       content: Content
       description: Description
     deputado:
-      content: 'Informações do deputado(a) %{text}'
+      content: 'Gastos do deputado(a) %{name} em %{year}'
       invalid:
         Nome não encontrado na legislatura atual. Confira o nome do Deputado,
         ou pesquise por partidos ou estados os deputados com mandato em vigor.

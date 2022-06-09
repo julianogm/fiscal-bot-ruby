@@ -44,26 +44,14 @@ module CamaraConcern
     mensagem.concat("email: #{deputado["email"]}\n")
     mensagem.concat("telefone: (61) #{info_deputado['ultimoStatus']['gabinete']['telefone']}\n\n")
 
-    mensagem.concat(t('.content', text: deputado['nome']) +" em #{Time.now.year}\n")
+    mensagem.concat(t('.content', name: deputado['nome'], year: Time.now.year) + "\n")
     mensagem.concat("Cota para o Exercício da Atividade Parlamentar (CEAP): R$ #{gastos_deputado.first}\n")
     mensagem.concat("Verba de Gabinete utilizada: R$ #{gastos_deputado.second}")
     mensagem.concat("\n\nMais informações: https://www.camara.leg.br/deputados/#{deputado["id"]}\n")
 
-    mensagem.concat("\nSobre a CEAP: https://www2.camara.leg.br/transparencia/acesso-a-informacao/copy_of_perguntas-frequentes/cota-para-o-exercicio-da-atividade-parlamentar")
+    mensagem.concat("\nSobre a CEAP: http://tiny.cc/ceap")
 
     mensagem
-  end
-
-  #API NAO RETORNA TODOS OS PARTIDOS, NECESSARIO FAZER VARIAS REQUISICOES
-  def lista_partidos
-    lista = []
-    i = 0
-    while true
-      response = get_request(API_CAMARA + "partidos?pagina=#{i+=1}")
-      break if response.empty?
-      lista << response
-    end
-    lista.flatten(1)    #nivela o array
   end
 
   def despesas_deputado(id)
@@ -78,13 +66,6 @@ module CamaraConcern
     lista.map{ |i| i['valorLiquido'] }.sum
   end
 
-  def get_request(url)
-    response = Faraday.get(url)
-    return response.body unless response.headers['Content-Type'].include?('application/json')
-    page = JSON.parse(response.body)
-    page['dados']
-  end
-
   def gastos(id)
     url = "https://www.camara.leg.br/deputados/#{id}"
     response = get_request(url)
@@ -96,5 +77,14 @@ module CamaraConcern
     index = list.find_index("TotalGasto\n") + 1   # procura o próximo elemento "TotalGasto\n", retorna seu indice e adiciona 1
     resposta << list[index].chop                  # pesquisa o valor gasto com verba de gabinete e remove o \n no final da string
     resposta
+  end
+
+  private
+
+  def get_request(url)
+    response = Faraday.get(url)
+    return response.body unless response.headers['Content-Type'].include?('application/json')
+    page = JSON.parse(response.body)
+    page['dados']
   end
 end
