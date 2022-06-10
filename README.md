@@ -13,6 +13,7 @@ Gems utilizadas:
 rails 7.0.2  
 telegram-bot 0.15.6  
 faraday 2.3  
+nokogiri 1.13.6
 
 
 <!--
