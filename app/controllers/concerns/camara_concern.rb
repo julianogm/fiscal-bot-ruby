@@ -28,25 +28,9 @@ module CamaraConcern
     hash.map{ |dep| dep['nome'] }.join("\n")
   end
 
-  def foto_deputado(id_deputado)
-    lista_deputados.select{|e| e['id']==id_deputado}.first['urlFoto']
-  end
-
   def dados_deputado(deputado)
     info_deputado = get_request(API_CAMARA + "deputados/#{deputado["id"]}")
     montar_mensagem(deputado, info_deputado)
-  end
-
-  def despesas_deputado(id)
-    lista = []
-    i = 0
-    while true
-      response = get_request(API_CAMARA + "deputados/#{id}/despesas?ano=#{Time.now.year}&pagina=#{i+=1}")
-      break if response.empty?
-      lista << response
-    end
-    lista.flatten!(1)
-    lista.map{ |i| i['valorLiquido'] }.sum
   end
 
   private
@@ -71,6 +55,7 @@ module CamaraConcern
     mensagem.concat(t('.ceap', ceap: gastos_deputado.first))
     mensagem.concat(t('.verba_gab', verba_gab: gastos_deputado.second))
     mensagem.concat(t('.link_dep', id: deputado["id"]))
+    mensagem.concat(t('.link_gastos'))
     mensagem.concat(t('.link_ceap'))
 
     mensagem

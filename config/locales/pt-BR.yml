@@ -33,10 +33,12 @@ pt-BR:
       gastos:         "Gastos do deputado(a) %{nome} em %{ano}\n"
       ceap:           "Cota de Atividade Parlamentar (CEAP): R$ %{ceap}\n"
       verba_gab:      "Verba de Gabinete utilizada: R$ %{verba_gab}\n\n"
-      link_dep:       "Mais informações: https://www.camara.leg.br/deputados/%{id}\n\n"
+      link_dep:       "Mais sobre o deputado(a): https://www.camara.leg.br/deputados/%{id}\n"
+      link_gastos:    "Detalhes dos gastos da camara: http://tiny.cc/gastos_parlamentares\n\n"
       link_ceap:      "Sobre o CEAP: http://tiny.cc/ceap"
       invalido:
         Nome não encontrado na legislatura atual. Confira o nome do Deputado,
         ou pesquise por partidos ou estados os deputados com mandato em vigor.
     deputados:
       mensagem: 'Escolha um filtro:'
+
