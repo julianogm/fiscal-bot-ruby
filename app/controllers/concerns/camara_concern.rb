@@ -33,25 +33,8 @@ module CamaraConcern
   end
 
   def dados_deputado(deputado)
-    #deputado = lista_deputados.select{ |e| e['nome']==nome_deputado }.first
     info_deputado = get_request(API_CAMARA + "deputados/#{deputado["id"]}")
-    gastos_deputado = gastos(deputado["id"])
-    mensagem = ""
-    mensagem.concat("Nome civil: #{info_deputado['nomeCivil']}\n")
-    mensagem.concat("CPF: #{info_deputado['cpf']}\n")
-    mensagem.concat("Partido: #{deputado["siglaPartido"]}\n")
-    mensagem.concat("Estado: #{deputado["siglaUf"]}\n")
-    mensagem.concat("email: #{deputado["email"]}\n")
-    mensagem.concat("telefone: (61) #{info_deputado['ultimoStatus']['gabinete']['telefone']}\n\n")
-
-    mensagem.concat(t('.content', name: deputado['nome'], year: Time.now.year) + "\n")
-    mensagem.concat("Cota para o Exercício da Atividade Parlamentar (CEAP): R$ #{gastos_deputado.first}\n")
-    mensagem.concat("Verba de Gabinete utilizada: R$ #{gastos_deputado.second}")
-    mensagem.concat("\n\nMais informações: https://www.camara.leg.br/deputados/#{deputado["id"]}\n")
-
-    mensagem.concat("\nSobre a CEAP: http://tiny.cc/ceap")
-
-    mensagem
+    montar_mensagem(deputado, info_deputado)
   end
 
   def despesas_deputado(id)
@@ -66,6 +49,33 @@ module CamaraConcern
     lista.map{ |i| i['valorLiquido'] }.sum
   end
 
+  private
+
+  def get_request(url)
+    response = Faraday.get(url)
+    return response.body unless response.headers['Content-Type'].include?('application/json')
+    page = JSON.parse(response.body)
+    page['dados']
+  end
+
+  def montar_mensagem(deputado, info_deputado)
+    gastos_deputado = gastos(deputado["id"])
+    mensagem = ""
+    mensagem.concat(t('.nome_civil', nome: info_deputado['nomeCivil']))
+    mensagem.concat(t('.cpf', cpf: info_deputado['cpf']))
+    mensagem.concat(t('.partido', partido: deputado["siglaPartido"]))
+    mensagem.concat(t('.estado', estado: deputado["siglaUf"]))
+    mensagem.concat(t('.email', email: deputado["email"]))
+    mensagem.concat(t('.telefone', telefone: info_deputado['ultimoStatus']['gabinete']['telefone']))
+    mensagem.concat(t('.gastos', nome: deputado['nome'], ano: Time.now.year))
+    mensagem.concat(t('.ceap', ceap: gastos_deputado.first))
+    mensagem.concat(t('.verba_gab', verba_gab: gastos_deputado.second))
+    mensagem.concat(t('.link_dep', id: deputado["id"]))
+    mensagem.concat(t('.link_ceap'))
+
+    mensagem
+  end
+
   def gastos(id)
     url = "https://www.camara.leg.br/deputados/#{id}"
     response = get_request(url)
@@ -77,14 +87,5 @@ module CamaraConcern
     index = list.find_index("TotalGasto\n") + 1   # procura o próximo elemento "TotalGasto\n", retorna seu indice e adiciona 1
     resposta << list[index].chop                  # pesquisa o valor gasto com verba de gabinete e remove o \n no final da string
     resposta
-  end
-
-  private
-
-  def get_request(url)
-    response = Faraday.get(url)
-    return response.body unless response.headers['Content-Type'].include?('application/json')
-    page = JSON.parse(response.body)
-    page['dados']
   end
 end

@@ -1,31 +1,42 @@
 pt-BR:
   telegram_webhooks:
-    action_missing:
-      command: 'comando inválido'
+    iniciar:
+      mensagem: Bot iniciado, digite /ajuda para para listar os comandos.
+    comando_invalido:
+      mensagem: Comando inválido. Digite /ajuda para para listar os comandos disponíveis.
     callback_query:
       estado: 'Listando os deputados da unidade federativa: %{text}'
       partido: 'Listando os deputados do partido: %{text}'
-      prompt: Escolha o filtro desejado
+      partidos: 'Selecione um partido:'
+      estados: 'Selecione um estado:'
     ajuda:
-      content: |
+      mensagem: |
         Comandos disponíveis:
         /ajuda - Listar comandos do bot
         /deputados - Pesquisar deputados por filtros.
-        /deputado nome - Pesquisar dados de um deputado pelo nome.
+        /deputado 'nome do deputado' - Pesquisar dados de um deputado pelo nome.
         /estados - Listar deputados por Estado-UF.
         /partidos - Listar deputados por partidos.
     estados:
-      prompt: 'Selecione um estado:'
+      estados: 'Selecione um estado:'
     partidos:
-      prompt: 'Selecione um partido:'
-    inline_query:
-      content: Content
-      description: Description
+      partidos: 'Selecione um partido:'
     deputado:
-      content: 'Gastos do deputado(a) %{name} em %{year}'
-      invalid:
+      nome_em_falta:  Nome em falta. Insira um nome ou uma parte do nome com 3 letras ou mais.
+      nome_curto:     Nome muito curto. Insira um nome completo ou uma parte do nome com 3 letras ou mais.
+      nome_civil:     "Nome civil: %{nome}\n"
+      cpf:            "CPF: %{cpf}\n"
+      partido:        "Partido: %{partido}\n"
+      estado:         "Estado: %{estado}\n"
+      email:          "Email: %{email}\n"
+      telefone:       "Telefone: (61) %{telefone}\n\n"
+      gastos:         "Gastos do deputado(a) %{nome} em %{ano}\n"
+      ceap:           "Cota de Atividade Parlamentar (CEAP): R$ %{ceap}\n"
+      verba_gab:      "Verba de Gabinete utilizada: R$ %{verba_gab}\n\n"
+      link_dep:       "Mais informações: https://www.camara.leg.br/deputados/%{id}\n\n"
+      link_ceap:      "Sobre o CEAP: http://tiny.cc/ceap"
+      invalido:
         Nome não encontrado na legislatura atual. Confira o nome do Deputado,
         ou pesquise por partidos ou estados os deputados com mandato em vigor.
-    message:
-      invalid: Comando Inválido. Digite /ajuda para ver os comandos disponíveis.
-      content: 'Gastos do deputado(a) %{text}'
+    deputados:
+      mensagem: 'Escolha um filtro:'

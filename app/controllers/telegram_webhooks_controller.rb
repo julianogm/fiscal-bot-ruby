@@ -3,32 +3,30 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   include CamaraConcern
 
   def iniciar!(*)
-    respond_with :message, text: t('.content')
+    respond_with :message, text: t('.mensagem')
   end
 
   def ajuda!(*)
-    respond_with :message, text: t('.content')
+    respond_with :message, text: t('.mensagem')
   end
 
   def deputados!(*)
-    respond_with :message, text: "Escolha um Filtro", reply_markup: {
+    respond_with :message, text: t('.mensagem'), reply_markup: {
       inline_keyboard: [
-          [
-            {text: "Por Estado", callback_data: "estados"},
-            {text: "Por Partido", callback_data: "partidos"},
-           ]
+          [ {text: "Por Estado", callback_data: "estados"},
+            {text: "Por Partido", callback_data: "partidos"}, ]
       ]
     }
   end
 
   def estados!(*)
-    respond_with :message, text: t('.prompt'), reply_markup: {
+    respond_with :message, text: t('.estados'), reply_markup: {
       inline_keyboard: estados_buttons
     }
   end
 
   def partidos!(*)
-    respond_with :message, text: t('.prompt'), reply_markup: {
+    respond_with :message, text: t('.partidos'), reply_markup: {
       inline_keyboard: partidos_buttons
     }
   end
@@ -38,12 +36,12 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     nome_deputado.downcase!
 
     if nome_deputado.empty?
-      respond_with :message, text: "Nome em falta. Insira um nome ou uma parte do nome com 3 letras ou mais."
+      respond_with :message, text: t('.nome_em_falta')
       return
     end
 
     if nome_deputado.size < 3
-      respond_with :message, text: "Nome muito curto. Insira um nome completo ou uma parte do nome com 3 letras ou mais."
+      respond_with :message, text: t('.nome_curto')
       return
     end
 
@@ -52,7 +50,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     deputado = lista.first if lista.size==1
 
     if lista.empty?
-      respond_with :message, text: t('.deputado.invalid')
+      respond_with :message, text: t('.invalido')
     elsif deputado.nil?
       respond_with :message, text: nomes_deputados(lista)
     else
@@ -77,7 +75,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   def action_missing(action, *_args)
     if action_type == :command
       respond_with :message,
-        text: t('telegram_webhooks.action_missing.command', command: action_options[:command])
+        text: t('telegram_webhooks.comando_invalido.mensagem', command: action_options[:command])
     end
   end
 end
