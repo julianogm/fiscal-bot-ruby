@@ -1,0 +1,1 @@
+bot: rails telegram:bot:poller
