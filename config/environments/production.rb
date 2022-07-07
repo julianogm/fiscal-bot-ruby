@@ -66,4 +66,6 @@ Rails.application.configure do
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
   end
+
+  routes.default_url_options = {host: 'git.heroku.com/radiant-oasis-30531.git', protocol: 'https'} # https is necessary!
 end
