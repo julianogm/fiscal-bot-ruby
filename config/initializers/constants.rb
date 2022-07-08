@@ -10,6 +10,6 @@ UF = {'AC' => 'Acre', 'AL' => 'Alagoas', 'AP' => 'Amapá',
       'SP' => 'São Paulo', 'SE' => 'Sergipe', 'TO' => 'Tocantins' }
 
 
-API_CAMARA = "https://dadosabertos.camara.leg.br/api/v2/".freeze
+API_CAMARA = "https://dadosabertos.camara.leg.br/api/v2/"
 
 LEGISLATURA = API_CAMARA + "legislaturas?itens=1&ordem=DESC&ordenarPor=id"
